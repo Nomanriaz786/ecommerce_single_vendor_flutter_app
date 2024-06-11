@@ -1,0 +1,91 @@
+name: ecommerce_app
+description: "A new Flutter project."
+
+publish_to: 'none'
+version: 1.0.0+1
+
+#-----------------SDK-------------------#
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+#-----------------Packages-------------------#
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  #utility Packages
+  intl: ^0.19.0
+  http: ^1.2.1
+  logger: ^2.3.0
+  url_launcher: ^6.3.0
+  smooth_page_indicator: ^1.1.0
+  flutter_native_splash: ^2.4.0
+  lottie: ^3.1.2
+  connectivity_plus: ^6.0.3
+  shimmer: ^3.0.0
+  image_picker: ^1.1.2
+  cached_network_image: ^3.3.1
+
+  #icons
+  iconsax: ^0.0.8
+  cupertino_icons: ^1.0.8
+
+  #state management
+  get: ^4.6.6
+  get_storage: ^2.1.1
+
+
+  # Products-Related
+  carousel_slider: ^4.2.1
+  readmore: ^3.0.0
+  flutter_rating_bar: ^4.0.1
+
+  # Firebase
+  firebase_core: ^3.0.0
+  cloud_firestore: ^5.0.0
+  firebase_auth: ^5.0.0
+  google_sign_in: ^6.2.1
+  firebase_performance: ^0.10.0
+  firebase_storage: ^12.0.0
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0
+
+#-----------------Local Assets-------------------#
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/logos/
+    - assets/icons/brands/
+    - assets/images/content/
+    - assets/images/banners/
+    - assets/images/reviews/
+    - assets/images/products/
+    - assets/icons/categories/
+    - assets/images/animations/
+    - assets/icons/payment_methods/
+    - assets/images/on_boarding_images/
+
+  #-----------------Local Fonts-------------------#
+
+  fonts:
+     - family: Poppins
+       fonts:
+         - asset: fonts/Poppins-Regular.ttf
+         - asset: fonts/Poppins-Italic.ttf
+           style: italic
+         - asset: fonts/Poppins-Light.ttf
+           weight: 200
+         - asset: fonts/Poppins-Bold.ttf
+           weight: 600
+         - asset: fonts/Poppins-ExtraBold.ttf
+           weight: 800
+
