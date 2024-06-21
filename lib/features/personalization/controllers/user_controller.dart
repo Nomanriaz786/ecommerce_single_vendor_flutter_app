@@ -82,7 +82,7 @@ class UserController extends GetxController {
                 nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '',
             userName: username,
             profilePicture: userCredentials.user!.photoURL ?? '',
-            roles: ['User'],
+            roles: ['user'],
           );
 
           // - Save user data

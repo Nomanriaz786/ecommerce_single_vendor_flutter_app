@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/common/widgets/custom_shapes/Containers/rounded_container.dart';
 import 'package:ecommerce_app/util/constants/colors.dart';
 import 'package:ecommerce_app/util/constants/sizes.dart';
 import 'package:ecommerce_app/util/helpers/helper_functions.dart';
@@ -18,12 +19,8 @@ class DashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = EHelperFunctions.isDarkMode(context);
-    return Card(
-      elevation: 2,
-      color: dark ? EColors.light : EColors.dark,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(ESizes.borderRadiusLg),
-      ),
+    return ERoundedContainer(
+      backGroundColor: dark ? EColors.light : EColors.dark,
       child: InkWell(
         // Wrap in InkWell for tap functionality
         onTap: onTap,
@@ -35,7 +32,7 @@ class DashboardCard extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 40,
+                size: 30,
                 color: dark ? EColors.dark : EColors.light,
               ),
               const SizedBox(height: ESizes.sm),
@@ -50,7 +47,7 @@ class DashboardCard extends StatelessWidget {
                 value,
                 style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: EColors.primary, // Use your color constants
+                      color: EColors.secondary, // Use your color constants
                     ),
               ),
             ],
