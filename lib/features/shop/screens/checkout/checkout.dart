@@ -1,25 +1,32 @@
 import 'package:ecommerce_app/common/widgets/appbar/app_bar.dart';
 import 'package:ecommerce_app/common/widgets/custom_shapes/Containers/rounded_container.dart';
 import 'package:ecommerce_app/common/widgets/products/cart/coupon_widget.dart';
-import 'package:ecommerce_app/common/widgets/success_screens/success_screen_1.dart';
+import 'package:ecommerce_app/features/shop/controllers/product/cart_controller.dart';
+import 'package:ecommerce_app/features/shop/controllers/product/checkout_controller.dart';
+import 'package:ecommerce_app/features/shop/controllers/product/order_controller.dart';
 import 'package:ecommerce_app/features/shop/screens/cart/widgets/cart_items.dart';
-import 'package:ecommerce_app/features/shop/screens/checkout/widgets/biiling_amount_section.dart';
+import 'package:ecommerce_app/features/shop/screens/checkout/widgets/billing_amount_section.dart';
 import 'package:ecommerce_app/features/shop/screens/checkout/widgets/billing_address_section.dart';
 import 'package:ecommerce_app/features/shop/screens/checkout/widgets/billing_payment_section.dart';
 import 'package:ecommerce_app/util/constants/colors.dart';
-import 'package:ecommerce_app/util/constants/image_strings.dart';
 import 'package:ecommerce_app/util/constants/sizes.dart';
 import 'package:ecommerce_app/util/helpers/helper_functions.dart';
+import 'package:ecommerce_app/util/helpers/pricing_calculator.dart';
+import 'package:ecommerce_app/util/popup/loaders.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../../../bottom_navigation_bar.dart';
 
 class CheckOutScreen extends StatelessWidget {
   const CheckOutScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Get.put(CheckoutController());
+    final cartController = CartController.instance;
+    final subtotal = cartController.totalCartPrice.value;
+    final orderController = Get.put(OrderController());
+    final totalPrice = EPricingCalculator.calculateTotalPrice(subtotal, 'Pk');
+
     final dark = EHelperFunctions.isDarkMode(context);
     return Scaffold(
       appBar: EAppBar(
@@ -87,15 +94,12 @@ class CheckOutScreen extends StatelessWidget {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(ESizes.defaultSpace),
         child: ElevatedButton(
-          onPressed: () => Get.to(
-            () => SuccessScreen(
-              image: EImages.successfulPaymentIcon,
-              title: 'Payment Success!',
-              subtitle: 'Your Product is Shipped Soon',
-              onPressed: () => Get.offAll(() => const BottomNavigation()),
-            ),
-          ),
-          child: const Text('Checkout'),
+          onPressed: () => subtotal > 0
+              ? orderController.processOrder(totalPrice)
+              : ELoaders.warningSnackBar(
+                  title: 'Empty Cart',
+                  message: 'Add items in the cart in order to proceed'),
+          child: Text('Checkout \$$totalPrice'),
         ),
       ),
     );

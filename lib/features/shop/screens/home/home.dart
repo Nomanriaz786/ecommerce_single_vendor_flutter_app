@@ -57,6 +57,8 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(
                     height: ESizes.spaceBtSections,
                   ),
+
+                  /// -Heading
                   ESectionHeading(
                     title: 'Popular Products',
                     onPressed: () => Get.to(() => AllProductsPage(
@@ -67,6 +69,8 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(
                     height: ESizes.spaceBtSections,
                   ),
+
+                  /// -Popular Products
                   Obx(() {
                     if (controller.isLoading.value) {
                       return const EVerticalProductShimmer();
@@ -78,6 +82,7 @@ class HomeScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyMedium,
                       ));
                     }
+
                     return EGridLayout(
                       itemCount: controller.featuredProducts.length,
                       itemBuilder: (_, index) => EProductCardVertical(

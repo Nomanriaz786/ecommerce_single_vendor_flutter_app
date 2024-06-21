@@ -4,7 +4,9 @@ import 'package:ecommerce_app/common/widgets/products/favourite_icon/favourite_i
 import 'package:ecommerce_app/common/widgets/text/e_brand_title_text_with_verified_icon.dart';
 import 'package:ecommerce_app/common/widgets/text/product_price_text.dart';
 import 'package:ecommerce_app/common/widgets/text/product_title_text.dart';
-import 'package:ecommerce_app/util/constants/image_strings.dart';
+import 'package:ecommerce_app/features/shop/controllers/product/product_controller.dart';
+import 'package:ecommerce_app/features/shop/models/product_model.dart';
+import 'package:ecommerce_app/util/constants/enums.dart';
 import 'package:ecommerce_app/util/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -13,10 +15,13 @@ import '../../../../util/constants/colors.dart';
 import '../../../../util/helpers/helper_functions.dart';
 
 class EProductCardHorizontal extends StatelessWidget {
-  const EProductCardHorizontal({super.key});
-
+  const EProductCardHorizontal({super.key, required this.product});
+  final ProductModel product;
   @override
   Widget build(BuildContext context) {
+    final controller = ProductController.instance;
+    final salePercentage =
+        controller.calculateSalePercentage(product.price, product.salePrice);
     final dark = EHelperFunctions.isDarkMode(context);
     return Container(
       width: 310,
@@ -36,39 +41,41 @@ class EProductCardHorizontal extends StatelessWidget {
             child: Stack(
               children: [
                 ///Thumbnail Image
-                const SizedBox(
+                SizedBox(
                   width: 120,
                   height: 120,
                   child: ERoundedImage(
-                    imageUrl: EImages.productImage1,
+                    imageUrl: product.thumbnail,
                     applyImageRadius: true,
+                    isNetworkImage: true,
                   ),
                 ),
 
                 ///sale tag
-                Positioned(
-                  top: 12,
-                  child: ERoundedContainer(
-                    radius: ESizes.sm,
-                    backGroundColor: EColors.secondary.withOpacity(0.8),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: ESizes.sm, vertical: ESizes.xs),
-                    child: Text(
-                      '25%',
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelLarge!
-                          .apply(color: EColors.black),
+                if (salePercentage != null)
+                  Positioned(
+                    top: 12,
+                    child: ERoundedContainer(
+                      radius: ESizes.sm,
+                      backGroundColor: EColors.secondary.withOpacity(0.8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: ESizes.sm, vertical: ESizes.xs),
+                      child: Text(
+                        '$salePercentage%',
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .apply(color: EColors.black),
+                      ),
                     ),
                   ),
-                ),
 
                 ///favourite icon
-                const Positioned(
+                Positioned(
                     top: 0,
                     right: 0,
                     child: EFavouriteIcon(
-                      productId: '',
+                      productId: product.id,
                     )),
               ],
             ),
@@ -81,25 +88,54 @@ class EProductCardHorizontal extends StatelessWidget {
               padding: const EdgeInsets.only(top: ESizes.sm, left: ESizes.sm),
               child: Column(
                 children: [
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       EProductTitleText(
-                        title: 'Green Nike Sports Shoes',
+                        title: product.title,
                         smallSize: true,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: ESizes.spaceBtItems / 2,
                       ),
-                      EBrandTitleTextWithVerifiedIcon(title: 'Nike'),
+                      EBrandTitleTextWithVerifiedIcon(
+                          title: product.brand!.name),
                     ],
                   ),
                   const Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ///pricing
-                      const Flexible(child: EProductPriceText(price: '250')),
+                      ///Price
+                      Flexible(
+                        child: Column(
+                          children: [
+                            if (product.productType ==
+                                    ProductType.single.toString() &&
+                                product.salePrice > 0)
+                              Padding(
+                                padding: const EdgeInsets.all(ESizes.sm),
+                                child: Text(
+                                  product.price.toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .apply(
+                                          decoration:
+                                              TextDecoration.lineThrough),
+                                ),
+                              ),
+
+                            /// -Show sale price as main price if sale exist
+                            Padding(
+                              padding: const EdgeInsets.all(ESizes.sm),
+                              child: EProductPriceText(
+                                price: controller.getProductPrice(product),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
                       ///ADD to Cart
                       Container(

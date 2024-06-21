@@ -81,7 +81,7 @@ class EProductMetaData extends StatelessWidget {
         Row(
           children: [
             const EProductTitleText(
-              title: 'Status',
+              title: 'Status :',
             ),
             const SizedBox(
               width: ESizes.spaceBtItems,
@@ -98,20 +98,22 @@ class EProductMetaData extends StatelessWidget {
         ),
 
         /// brand
-        Row(
-          children: [
-            ECircularImage(
-              image: product.brand != null ? product.brand!.image : '',
-              width: 32,
-              height: 32,
-              overlayColor: dark ? EColors.white : EColors.black,
-            ),
-            EBrandTitleTextWithVerifiedIcon(
-              title: product.brand != null ? product.brand!.name : '',
-              brandTextSizes: TextSizes.medium,
-            ),
-          ],
-        )
+        if (product.brand != null)
+          Row(
+            children: [
+              ECircularImage(
+                image: product.brand!.image,
+                isNetworkImage: true,
+                width: 32,
+                height: 32,
+                overlayColor: dark ? EColors.white : EColors.black,
+              ),
+              EBrandTitleTextWithVerifiedIcon(
+                title: product.brand!.name,
+                brandTextSizes: TextSizes.medium,
+              ),
+            ],
+          )
       ],
     );
   }

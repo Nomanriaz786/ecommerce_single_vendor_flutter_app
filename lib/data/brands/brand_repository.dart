@@ -54,4 +54,44 @@ class BrandRepository extends GetxController {
       throw 'Something went wrong, Please try again later';
     }
   }
+
+/*----------------------------Admin Panel-------------------------------------*/
+  /// -Delete Category
+  Future<void> deleteBrand(String brandId) async {
+    try {
+      await _db.collection('Brands').doc(brandId).delete();
+    } on FirebaseException catch (e) {
+      throw TFirebaseException(e.code).message;
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong, Please try again later';
+    }
+  }
+
+  /// -add Category
+  Future<void> addBrand(BrandModel brand) async {
+    try {
+      await _db.collection('Brands').add(brand.toJson());
+    } on FirebaseException catch (e) {
+      throw TFirebaseException(e.code).message;
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong, Please try again later';
+    }
+  }
+
+  // -update category to Firebase Firestore
+  Future<void> updateBrand(String id, BrandModel brand) async {
+    try {
+      await _db.collection('Brands').doc(id).update(brand.toJson());
+    } on FirebaseException catch (e) {
+      throw TFirebaseException(e.code).message;
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong, Please try again later';
+    }
+  }
 }

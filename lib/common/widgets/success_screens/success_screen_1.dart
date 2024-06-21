@@ -13,7 +13,7 @@ class SuccessScreen extends StatelessWidget {
       required this.title,
       required this.subtitle,
       required this.onPressed});
-  final image, title, subtitle;
+  final String image, title, subtitle;
   final VoidCallback onPressed;
 
   @override

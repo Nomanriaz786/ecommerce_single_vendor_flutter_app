@@ -29,7 +29,7 @@ class BrandProducts extends StatelessWidget {
               ///Brand Detail
               EBrandsCard(
                 showBorder: true,
-                brand: BrandModel.empty(),
+                brand: brand,
               ),
               const SizedBox(
                 height: ESizes.spaceBtSections,

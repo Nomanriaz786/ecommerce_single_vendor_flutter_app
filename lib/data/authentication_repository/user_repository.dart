@@ -36,7 +36,7 @@ class UserRepository extends GetxController {
     try {
       final documentSnapshot = await _db
           .collection('User')
-          .doc(AuthenticationRepository.instance.authUser?.uid)
+          .doc(AuthenticationRepository.instance.authUser.uid)
           .get();
       if (documentSnapshot.exists) {
         return UserModel.fromSnapshot(documentSnapshot);
@@ -77,7 +77,7 @@ class UserRepository extends GetxController {
     try {
       await _db
           .collection('User')
-          .doc(AuthenticationRepository.instance.authUser?.uid)
+          .doc(AuthenticationRepository.instance.authUser.uid)
           .update(json);
     } on FirebaseException catch (e) {
       throw TFirebaseException(e.code).message;
@@ -116,6 +116,58 @@ class UserRepository extends GetxController {
       throw TFirebaseException(e.code).message;
     } on FormatException catch (_) {
       throw const TFormatException();
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong, Please try again later';
+    }
+  }
+
+  // Fetch user roles from Firestore
+  Future<List<String>> getUserRoles(String uid) async {
+    try {
+      final doc = await _db.collection('User').doc(uid).get();
+      if (doc.exists) {
+        final data = doc.data() as Map<String, dynamic>;
+        return List<String>.from(data['Roles'] ?? []); // Safely extract roles
+      }
+    } catch (e) {
+      throw 'Something went wrong, Please try again later';
+    }
+    return []; // Return an empty list if roles are not found
+  }
+
+  /*----------------------------Admin Panel---------------------------------*/
+  Future<List<UserModel>> getAllUsers() async {
+    try {
+      final snapshot = await _db.collection('User').get();
+      return snapshot.docs.map((e) => UserModel.fromSnapshot(e)).toList();
+    } on FirebaseException catch (e) {
+      throw TFirebaseException(e.code).message;
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong, Please try again later';
+    }
+  }
+
+  Future<void> updateUser(UserModel user) async {
+    try {
+      await _db.collection('User').doc(user.id).update(user.toJson());
+    } on FirebaseException catch (e) {
+      throw TFirebaseException(e.code).message;
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong, Please try again later';
+    }
+  }
+
+  Future<void> deleteUser(String id) async {
+    try {
+      await _db.collection('User').doc(id).delete();
+    } on FirebaseException catch (e) {
+      throw TFirebaseException(e.code).message;
     } on PlatformException catch (e) {
       throw TPlatformException(e.code).message;
     } catch (e) {

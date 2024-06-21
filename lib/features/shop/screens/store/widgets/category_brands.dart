@@ -1,5 +1,5 @@
 import 'package:ecommerce_app/common/widgets/brands/brand_show_case.dart';
-import 'package:ecommerce_app/common/widgets/shimmers/EListTielShimmer.dart';
+import 'package:ecommerce_app/common/widgets/shimmers/list_tile_shimmer.dart';
 import 'package:ecommerce_app/common/widgets/shimmers/boxes_shimmer.dart';
 import 'package:ecommerce_app/features/shop/controllers/brand_controller.dart';
 import 'package:ecommerce_app/features/shop/models/category_model.dart';

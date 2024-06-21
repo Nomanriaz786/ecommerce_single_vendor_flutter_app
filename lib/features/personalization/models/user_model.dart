@@ -5,7 +5,8 @@ class UserModel {
   final String id;
   String firstName;
   String lastName;
-  final String email;
+  late final List<String> roles;
+  late final String email;
   final String userName;
   String phoneNumber;
   String profilePicture;
@@ -18,6 +19,7 @@ class UserModel {
     required this.firstName,
     required this.lastName,
     required this.userName,
+    required this.roles,
     required this.profilePicture,
   });
 
@@ -49,6 +51,7 @@ class UserModel {
       firstName: '',
       lastName: '',
       userName: '',
+      roles: [],
       profilePicture: '');
 
   /// - Convert model to Json to store data in firebase
@@ -60,6 +63,7 @@ class UserModel {
       'Email': email,
       'PhoneNumber': phoneNumber,
       'ProfilePicture': profilePicture,
+      'Roles': roles,
     };
   }
 
@@ -75,6 +79,7 @@ class UserModel {
         firstName: data['FirstName'] ?? '',
         lastName: data['LastName'] ?? '',
         userName: data['Username'] ?? '',
+        roles: List<String>.from(data['Roles'] ?? []),
         profilePicture: data['ProfilePicture'] ?? '',
       );
     } else {

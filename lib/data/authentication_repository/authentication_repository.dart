@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/Admin_Panel/screen/dashboard/dashboard.dart';
 import 'package:ecommerce_app/bottom_navigation_bar.dart';
 import 'package:ecommerce_app/data/authentication_repository/user_repository.dart';
 import 'package:ecommerce_app/exceptions/firebase_auth_exceptions.dart';
@@ -23,7 +24,7 @@ class AuthenticationRepository extends GetxController {
   final _auth = FirebaseAuth.instance;
 
   /// Getter to get authenticated user data
-  User? get authUser => _auth.currentUser;
+  User get authUser => _auth.currentUser!;
 
   /// - Run on main.dart file
   @override
@@ -37,9 +38,16 @@ class AuthenticationRepository extends GetxController {
     final user = _auth.currentUser;
     if (user != null) {
       if (user.emailVerified) {
-        // - Initialize user specific storage
-        await ELocalStorage.init(user.uid);
-        Get.offAll(() => const BottomNavigation());
+        List<String> roles =
+            await UserRepository.instance.getUserRoles(user.uid);
+        if (roles.map((role) => role.toLowerCase()).contains('admin')) {
+          await ELocalStorage.init(user.uid);
+          Get.offAll(() => const AdminDashboard());
+        } else {
+          // - Initialize user specific storage
+          await ELocalStorage.init(user.uid);
+          Get.offAll(() => const BottomNavigation());
+        }
       } else {
         Get.offAll(() => const VerifyEmailScreen());
       }

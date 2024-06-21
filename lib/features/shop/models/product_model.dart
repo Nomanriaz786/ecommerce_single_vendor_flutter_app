@@ -14,7 +14,7 @@ class ProductModel {
   double salePrice;
   DateTime? date;
   String thumbnail;
-  bool? isFeatured;
+  bool isFeatured;
   BrandModel? brand;
   String? description;
   String? categoryId;
@@ -23,23 +23,24 @@ class ProductModel {
   List<ProductAttributeModel>? productAttributes;
   List<ProductVariationModel>? productVariations;
 
+  // Improved constructor for clarity and consistency
   ProductModel({
     required this.id,
     required this.title,
     required this.thumbnail,
-    this.sku,
     required this.stock,
     required this.price,
+    this.sku,
     this.salePrice = 0.0,
-    this.productAttributes,
-    required this.productType,
-    this.productVariations,
-    this.brand,
     this.date,
-    required this.isFeatured,
-    this.images,
-    this.categoryId,
+    this.brand,
     this.description,
+    this.categoryId,
+    this.images,
+    required this.productType,
+    this.productAttributes,
+    this.productVariations,
+    required this.isFeatured,
   });
 
   /// - Create Empty function for clean code
@@ -54,7 +55,7 @@ class ProductModel {
       );
 
   /// Json code
-  toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'SKU': sku,
       'Title': title,
@@ -65,79 +66,68 @@ class ProductModel {
       'SalePrice': salePrice,
       'IsFeatured': isFeatured,
       'CategoryId': categoryId,
-      'Brand': brand!.toJson(),
+      'Brand': brand?.toJson(),
       'Description': description,
       'ProductType': productType,
-      'ProductAttributes': productAttributes != null
-          ? productAttributes!.map((e) => e.toJson()).toList()
-          : [],
-      'ProductVariations': productVariations != null
-          ? productVariations!.map((e) => e.toJson()).toList()
-          : [],
+      'ProductAttributes':
+          productAttributes?.map((e) => e.toJson()).toList() ?? [],
+      'ProductVariations':
+          productVariations?.map((e) => e.toJson()).toList() ?? [],
     };
   }
 
   /// - Map Json oriented document snapshot from firebase to model
   factory ProductModel.fromQuerySnapshot(
       QueryDocumentSnapshot<Object?> document) {
-    final data = document.data() as Map<String, dynamic>;
-    return ProductModel(
-      id: document.id,
-      title: data['Title'],
-      sku: data['SKU'],
-      stock: data['Stock'] ?? 0,
-      isFeatured: data['IsFeatured'] ?? false,
-      price: double.parse((data['Price'] ?? 0.0).toString()),
-      salePrice: double.parse((data['SalePrice'] ?? 0.0).toString()),
-      thumbnail: data['Thumbnail'] ?? '',
-      categoryId: data['CategoryId'] ?? '',
-      description: data['Description'] ?? '',
-      productType: data['ProductType'] ?? '',
-      brand: BrandModel.fromJson(data['Brand']),
-      images: data['Images'] != null ? List<String>.from(data['Images']) : [],
-      productAttributes: (data['ProductAttributes'] as List<dynamic>)
-          .map((e) => ProductAttributeModel.fromJson(e))
-          .toList(),
-      productVariations: (data['ProductVariations'] as List<dynamic>)
-          .map((e) => ProductVariationModel.fromJson(e))
-          .toList(),
-    );
+    return _fromSnapshot(document.id, document.data() as Map<String, dynamic>);
   }
 
   /// - Map Json oriented document snapshot from firebase to model
   factory ProductModel.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> document) {
-    if (document.data() == null) {
-      return ProductModel.empty();
-    }
-    final data = document.data()!;
+    return _fromSnapshot(document.id, document.data()!);
+  }
 
+  /// - Helper method to create a ProductModel from snapshot data
+  static ProductModel _fromSnapshot(String id, Map<String, dynamic> data) {
     try {
       return ProductModel(
-        id: document.id,
-        title: data['Title'],
-        sku: data['SKU'] ?? '',
-        stock: data['Stock'] ?? 0,
+        id: id,
+        title: data['Title'] ?? '',
+        sku: data['SKU'],
+        stock: data['Stock'] is int
+            ? data['Stock']
+            : int.tryParse(data['Stock']?.toString() ?? '0') ?? 0,
         isFeatured: data['IsFeatured'] ?? false,
-        price: double.parse((data['Price'] ?? 0.0).toString()),
-        salePrice: double.parse((data['SalePrice'] ?? 0.0).toString()),
+        price: _parseDouble(data['Price']),
+        salePrice: _parseDouble(data['SalePrice']),
         thumbnail: data['Thumbnail'] ?? '',
         categoryId: data['CategoryId'] ?? '',
         description: data['Description'] ?? '',
         productType: data['ProductType'] ?? '',
-        brand: BrandModel.fromJson(data['Brand']),
+        brand:
+            data['Brand'] != null ? BrandModel.fromJson(data['Brand']) : null,
         images: data['Images'] != null ? List<String>.from(data['Images']) : [],
-        productAttributes: (data['ProductAttributes'] as List<dynamic>)
-            .map((e) => ProductAttributeModel.fromJson(e))
-            .toList(),
-        productVariations: (data['ProductVariations'] as List<dynamic>)
-            .map((e) => ProductVariationModel.fromJson(e))
-            .toList(),
+        productAttributes: data['ProductAttributes'] != null
+            ? (data['ProductAttributes'] as List<dynamic>)
+                .map((e) => ProductAttributeModel.fromJson(e))
+                .toList()
+            : [],
+        productVariations: data['ProductVariations'] != null
+            ? (data['ProductVariations'] as List<dynamic>)
+                .map((e) => ProductVariationModel.fromJson(e))
+                .toList()
+            : [],
       );
     } catch (e) {
       ELoaders.errorSnackBar(
           title: "Error parsing ProductModel from snapshot: ${e.toString()}");
       return ProductModel.empty();
     }
+  }
+
+  /// Helper method to safely parse a double
+  static double _parseDouble(dynamic value) {
+    return double.tryParse(value?.toString() ?? '') ?? 0;
   }
 }

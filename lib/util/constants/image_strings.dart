@@ -50,6 +50,8 @@ class EImages {
 
   static const String pencilAnimation =
       "assets/images/animations/140429-pencil-drawing.json";
+  static const String cartAnimation =
+      "assets/images/animations/lady-adding-product-in-cart-animation.json";
 
   // -- Animations
   static const String productsIllustration =
@@ -263,5 +265,5 @@ class EImages {
   static const String paystack = "assets/icons/payment_methods/paystack.png";
   static const String paytm = "assets/icons/payment_methods/paytm.png";
   static const String successfulPaymentIcon =
-      "assets/icons/payment_methods/successful_payment_icon.png";
+      "assets/images/animations/120978-payment-successful.json";
 }

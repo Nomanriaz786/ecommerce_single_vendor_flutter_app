@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         backgroundColor: EColors.primary,
         body: Center(
           child: CircularProgressIndicator(
-            color: EColors.white,
+            color: Colors.white,
           ),
         ),
       ),

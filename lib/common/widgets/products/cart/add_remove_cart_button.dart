@@ -8,8 +8,12 @@ import 'package:iconsax/iconsax.dart';
 class EProductQuantityWithAddRemoveButton extends StatelessWidget {
   const EProductQuantityWithAddRemoveButton({
     super.key,
+    required this.quantity,
+    this.add,
+    this.remove,
   });
-
+  final int quantity;
+  final VoidCallback? add, remove;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -26,24 +30,27 @@ class EProductQuantityWithAddRemoveButton extends StatelessWidget {
           backgroundColor: EHelperFunctions.isDarkMode(context)
               ? EColors.darkerGrey
               : EColors.light,
+          onPressed: remove,
         ),
         const SizedBox(
           width: ESizes.spaceBtItems,
         ),
         Text(
-          '2',
+          quantity.toString(),
           style: Theme.of(context).textTheme.titleSmall,
         ),
         const SizedBox(
           width: ESizes.spaceBtItems,
         ),
-        const ECircularIcon(
-            icon: Iconsax.add,
-            width: 32,
-            height: 32,
-            size: ESizes.md,
-            backgroundColor: EColors.primary,
-            color: EColors.white),
+        ECircularIcon(
+          icon: Iconsax.add,
+          width: 32,
+          height: 32,
+          size: ESizes.md,
+          backgroundColor: EColors.primary,
+          color: EColors.white,
+          onPressed: add,
+        ),
       ],
     );
   }

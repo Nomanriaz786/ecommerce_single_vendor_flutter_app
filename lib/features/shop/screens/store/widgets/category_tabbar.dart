@@ -1,6 +1,6 @@
 import 'package:ecommerce_app/common/widgets/layout/grid_layout.dart';
 import 'package:ecommerce_app/common/widgets/products/products_card/product_card_vertical.dart';
-import 'package:ecommerce_app/common/widgets/shimmers/EListTielShimmer.dart';
+import 'package:ecommerce_app/common/widgets/shimmers/list_tile_shimmer.dart';
 import 'package:ecommerce_app/common/widgets/shimmers/boxes_shimmer.dart';
 import 'package:ecommerce_app/common/widgets/text/section_heading.dart';
 import 'package:ecommerce_app/features/shop/controllers/category_controller.dart';

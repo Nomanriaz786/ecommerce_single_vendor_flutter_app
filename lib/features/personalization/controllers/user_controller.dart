@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:ecommerce_app/Admin_Panel/screen/manage_users/display_all_users.dart';
 import 'package:ecommerce_app/data/authentication_repository/authentication_repository.dart';
 import 'package:ecommerce_app/data/authentication_repository/user_repository.dart';
 import 'package:ecommerce_app/features/authentication/screens/login/login.dart';
@@ -19,6 +22,16 @@ class UserController extends GetxController {
   Rx<UserModel> user = UserModel.empty().obs;
   final profileLoading = false.obs;
   final imageLoading = false.obs;
+  RxBool refreshData = true.obs;
+
+  late var firstName = TextEditingController();
+  final lastName = TextEditingController();
+  final email = TextEditingController();
+  final phoneNumber = TextEditingController();
+  var selectedRoles = <String>[].obs;
+  final List<String> availableRoles = ['admin', 'user', 'editor'];
+
+  GlobalKey<FormState> userFormKey = GlobalKey<FormState>();
 
   final hidePassword = false.obs;
   final verifyEmail = TextEditingController();
@@ -61,14 +74,16 @@ class UserController extends GetxController {
 
           // - Map Data
           final user = UserModel(
-              id: userCredentials.user!.uid,
-              email: userCredentials.user!.email ?? '',
-              phoneNumber: userCredentials.user!.phoneNumber ?? '',
-              firstName: nameParts[0],
-              lastName:
-                  nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '',
-              userName: username,
-              profilePicture: userCredentials.user!.photoURL ?? '');
+            id: userCredentials.user!.uid,
+            email: userCredentials.user!.email ?? '',
+            phoneNumber: userCredentials.user!.phoneNumber ?? '',
+            firstName: nameParts[0],
+            lastName:
+                nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '',
+            userName: username,
+            profilePicture: userCredentials.user!.photoURL ?? '',
+            roles: ['User'],
+          );
 
           // - Save user data
           await userRepository.saveUserRecord(user);
@@ -114,7 +129,7 @@ class UserController extends GetxController {
       // - ReAuthenticate user
       final auth = AuthenticationRepository.instance;
       final provider =
-          auth.authUser!.providerData.map((e) => e.providerId).first;
+          auth.authUser.providerData.map((e) => e.providerId).first;
       if (provider.isNotEmpty) {
         // - Re verify auth
         if (provider == 'google.com') {
@@ -211,5 +226,58 @@ class UserController extends GetxController {
     } finally {
       imageLoading.value = false;
     }
+  }
+
+/*----------------------------Admin Panel---------------------------------*/
+  void loadUser(UserModel user) {
+    firstName.text = user.firstName;
+    lastName.text = user.lastName;
+    email.text = user.email;
+    phoneNumber.text = user.phoneNumber;
+    selectedRoles.clear();
+    selectedRoles.value = List<String>.from(user.roles);
+  }
+
+  Future<List<UserModel>> getUsers() {
+    return UserRepository.instance.getAllUsers();
+  }
+
+  Future<void> updateUser(String id, UserModel user) async {
+    try {
+      EFullScreenLoader.openLoadingDialog(
+          'Processing Information...', EImages.docerAnimation);
+      final updatedUser = UserModel(
+        id: user.id,
+        firstName: firstName.text,
+        lastName: lastName.text,
+        email: email.text,
+        phoneNumber: phoneNumber.text,
+        roles: selectedRoles.toList(),
+        userName: user.userName,
+        profilePicture: user.profilePicture,
+      );
+      await UserRepository.instance.updateUser(updatedUser);
+
+      EFullScreenLoader.stopLoading();
+      ELoaders.successSnackBar(title: 'Wao!', message: 'User is updated');
+      refreshData.toggle();
+      clearControllers();
+      Get.to(() => const DisplayUsersScreen());
+    } catch (e) {
+      ELoaders.errorSnackBar(title: 'Oh Snap!', message: e.toString());
+    }
+  }
+
+  // -Clear controllers
+  void clearControllers() {
+    firstName.clear();
+    lastName.clear();
+    email.clear();
+    phoneNumber.clear();
+    selectedRoles.clear();
+  }
+
+  Future<void> deleteUser(String userId) async {
+    await UserRepository.instance.deleteUser(userId);
   }
 }

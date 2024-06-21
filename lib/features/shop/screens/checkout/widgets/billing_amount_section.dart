@@ -1,4 +1,6 @@
+import 'package:ecommerce_app/features/shop/controllers/product/cart_controller.dart';
 import 'package:ecommerce_app/util/constants/sizes.dart';
+import 'package:ecommerce_app/util/helpers/pricing_calculator.dart';
 import 'package:flutter/material.dart';
 
 class EBillingAmountSection extends StatelessWidget {
@@ -6,6 +8,8 @@ class EBillingAmountSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartController = CartController.instance;
+    final subTotal = cartController.totalCartPrice.value;
     return Column(
       children: [
         ///SubTotal
@@ -17,7 +21,7 @@ class EBillingAmountSection extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Text(
-              '\$256.0',
+              '\$$subTotal',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
@@ -35,10 +39,13 @@ class EBillingAmountSection extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Text(
-              '\$10.0',
+              '\$${EPricingCalculator.calculateShippingCost(subTotal, 'PK')}',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
+        ),
+        const SizedBox(
+          height: ESizes.spaceBtItems / 2,
         ),
 
         ///Tax fee
@@ -50,7 +57,7 @@ class EBillingAmountSection extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Text(
-              '\$256.0',
+              '\$${EPricingCalculator.calculateTax(subTotal, 'PK')}',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
@@ -65,11 +72,11 @@ class EBillingAmountSection extends StatelessWidget {
           children: [
             Text(
               'Order Total',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
             Text(
-              '\$256.0',
-              style: Theme.of(context).textTheme.titleMedium,
+              '\$${EPricingCalculator.calculateTotalPrice(subTotal, 'PK')}',
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
           ],
         ),

@@ -71,6 +71,7 @@ class SignupController extends GetxController {
         lastName: lastName.text.trim(),
         userName: username.text.trim(),
         profilePicture: '',
+        roles: ['User'],
       );
       final userRepository = Get.put(UserRepository());
       await userRepository.saveUserRecord(newUser);
