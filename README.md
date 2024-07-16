@@ -1,6 +1,6 @@
-# ecommerce_app
+# ecommerce_single_vendor_app_with_admin_panel
 
-A new Flutter project.
+This app will help small businesses to scale their business online.
 
 ## Getting Started
 
